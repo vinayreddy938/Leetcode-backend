@@ -16,6 +16,10 @@ export const registerService =async (user)=>{
 }
 export const loginService = async(user)=>{
     const dbUser  = await loginRepository(user);
+    if(!dbUser){
+        throw new CustomError("Invalid Credentials",401);
+
+    }
     const isPasswordValid = await bcrypt.compare(user.password,dbUser.password);
     if(!isPasswordValid){
         throw new CustomError("Invalid Credentials",401);

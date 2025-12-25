@@ -1,5 +1,7 @@
-import { use } from "react";
+
+import { JWT_SECRET } from "../config/server.config.js";
 import { loginService, registerService } from "../service/userAuthService.js";
+import jwt from "jsonwebtoken";
 
 export const registerController = async (req, res) => {
   try {
@@ -9,7 +11,7 @@ export const registerController = async (req, res) => {
       JWT_SECRET,
       { expiresIn: 60 * 60 }
     ); // 60sec *60 sec
-    response.cookie("token", token, { maxAge: 60 * 60 * 1000 }); // milliseconds
+    res.cookie("token", token, { maxAge: 60 * 60 * 1000 }); // milliseconds
 
     return res.status(201).json({
       message: "User Registered Sucessfully",
@@ -19,7 +21,14 @@ export const registerController = async (req, res) => {
       role: response.role,
     });
   } catch (err) {
-    console.log(err);
+    console.log(err.code)
+   if(err.code ===11000){
+    res.status(err.statusCode || 400).json({
+      success: false,
+      message: "User Already Exists",
+    });
+
+   }
 
     return res.status(err.statusCode || 500).json({
       success: false,
@@ -35,7 +44,7 @@ export const loginController = async (req, res) => {
     const token = jwt.sign({ emailId, _id }, JWT_SECRET, {
       expiresIn: 60 * 60,
     }); // 60sec *60 sec
-    response.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+    res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
     return res.status(200).json({
       success: true,
       message: "USer LogIn Sucessfully",
@@ -47,6 +56,7 @@ export const loginController = async (req, res) => {
       },
     });
   } catch (err) {
+    console.log(err)
     if (err.statusCode === 401) {
       return res.status(401).json({ success: false, message: err.message });
     }
@@ -55,5 +65,12 @@ export const loginController = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
-export const logoutController = (req, res) => {};
+export const logoutController = (req, res) => {
+    try{
+
+
+    }catch(err){
+
+    }
+};
 export const getProfile = (req, res) => {};

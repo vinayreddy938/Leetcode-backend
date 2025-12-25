@@ -1,8 +1,8 @@
-import { use } from "react";
+
 import User from "../model/user.schema.js";
 export const registerRepository = async (user) => {
   const user1 = new User(user);
-  const saveduser = await user1.save();
+  const savedUser = await user1.save();
   return savedUser;
 };
 export const loginRepository = (user) => {
