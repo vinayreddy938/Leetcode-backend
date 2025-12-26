@@ -9,7 +9,7 @@ const app  = express();
 app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
-app.use("/api/v1",authRouter);
+app.use("/api/v1/user",authRouter);
 const initiliazeConnection = async()=>{
     try{ 
         await Promise.all([connectDb(),redisClient.connect()]);

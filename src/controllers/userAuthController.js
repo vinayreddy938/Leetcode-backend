@@ -1,13 +1,13 @@
 import redisClient from "../config/redis.config.js";
 import { JWT_SECRET } from "../config/server.config.js";
-import { loginService, registerService } from "../service/userAuthService.js";
+import { adminRegisterService, loginService, registerService } from "../service/userAuthService.js";
 import jwt from "jsonwebtoken";
 
 export const registerController = async (req, res) => {
   try {
     const response = await registerService(req.body);
     const token = jwt.sign(
-      { emailId: response.emailId, _id: response._id },
+      { emailId: response.emailId, _id: response._id,role:'user' },
       JWT_SECRET,
       { expiresIn: 60 * 60 }
     ); // 60sec *60 sec
@@ -40,7 +40,7 @@ export const loginController = async (req, res) => {
   try {
     const user = await loginService(req.body);
     const { firstName, lastName, emailId, _id } = user;
-    const token = jwt.sign({ emailId, _id }, JWT_SECRET, {
+    const token = jwt.sign({ emailId, _id ,role:user.role}, JWT_SECRET, {
       expiresIn: 60 * 60,
     }); // 60sec *60 sec
     res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
@@ -84,4 +84,37 @@ export const logoutController = async (req, res) => {
     });
   }
 };
-export const getProfile = (req, res) => {};
+export const adminRegisterController = async(req,res)=>{
+   try {
+    
+    const response = await adminRegisterService(req.body);
+    const token = jwt.sign(
+      { emailId: response.emailId, _id: response._id,role:'admin' },
+      JWT_SECRET,
+      { expiresIn: 60 * 60 }
+    ); // 60sec *60 sec
+    res.cookie("token", token, { maxAge: 60 * 60 * 1000 }); // milliseconds
+
+    return res.status(201).json({
+      message: "User Registered Sucessfully",
+      firstName: response.firstName,
+      lastName: response.lastName,
+      emailId: response.emailId,
+      role: response.role,
+    });
+  } catch (err) {
+    console.log(err.code);
+    if (err.code === 11000) {
+      res.status(err.statusCode || 400).json({
+        success: false,
+        message: "User Already Exists",
+      });
+    }
+
+    return res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Something went wrong",
+    });
+  }
+
+}

@@ -7,12 +7,21 @@ import CustomError from "../utils/customError.js";
 
 export const registerService =async (user)=>{
     const{firstName,emailId,password} = user;
+    user.role = 'user';
     user.password =  await bcrypt.hash(password,10);
     const response = await registerRepository(user);
     return response;
 
  
     
+}
+export const adminRegisterService = async(user)=>{
+     const{firstName,emailId,password} = user;
+    user.role = 'admin';
+    user.password =  await bcrypt.hash(password,10);
+    const response = await registerRepository(user);
+    return response;
+
 }
 export const loginService = async(user)=>{
     const dbUser  = await loginRepository(user);
