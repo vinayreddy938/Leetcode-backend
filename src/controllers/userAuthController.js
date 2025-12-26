@@ -1,4 +1,4 @@
-
+import redisClient from "../config/redis.config.js";
 import { JWT_SECRET } from "../config/server.config.js";
 import { loginService, registerService } from "../service/userAuthService.js";
 import jwt from "jsonwebtoken";
@@ -21,14 +21,13 @@ export const registerController = async (req, res) => {
       role: response.role,
     });
   } catch (err) {
-    console.log(err.code)
-   if(err.code ===11000){
-    res.status(err.statusCode || 400).json({
-      success: false,
-      message: "User Already Exists",
-    });
-
-   }
+    console.log(err.code);
+    if (err.code === 11000) {
+      res.status(err.statusCode || 400).json({
+        success: false,
+        message: "User Already Exists",
+      });
+    }
 
     return res.status(err.statusCode || 500).json({
       success: false,
@@ -56,7 +55,7 @@ export const loginController = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     if (err.statusCode === 401) {
       return res.status(401).json({ success: false, message: err.message });
     }
@@ -65,12 +64,24 @@ export const loginController = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
-export const logoutController = (req, res) => {
-    try{
+export const logoutController = async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    const payload = jwt.decode(token);
+    await redisClient.set(`token:${token}`, "Blocked");
+    await redisClient.expireAt(`token${token}`, payload.exp);
 
+    res.cookie("token", null, {expires : new Date(Date.now())});
 
-    }catch(err){
-
-    }
+    return res.status(201).json({
+      success: true,
+      message: "User Logout Sucessfully",
+    });
+  } catch (err) {
+    return res.status(503).json({
+      success: false,
+      message: "Internal Server error",
+    });
+  }
 };
 export const getProfile = (req, res) => {};

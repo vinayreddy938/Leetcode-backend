@@ -9,6 +9,8 @@ export const loginRepository = (user) => {
   const dbUser = User.findOne({ emailId: user.emailId });
   return dbUser;
 };
-export const logoutRepository = () => {};
 
-export const getProfileRepository = () => {};
+
+export const getProfileRepository = () => {
+  
+};
