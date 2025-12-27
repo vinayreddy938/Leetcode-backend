@@ -5,11 +5,13 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/userAuth.js";
 import connectDb from "./config/db.config.js";
 import redisClient from "./config/redis.config.js";
+import problemRouter from "./routes/problemCreator.js";
 const app  = express();
 app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
 app.use("/api/v1/user",authRouter);
+app.use("/api/v1/problem",problemRouter);
 const initiliazeConnection = async()=>{
     try{ 
         await Promise.all([connectDb(),redisClient.connect()]);
