@@ -74,6 +74,18 @@ const problemSchema = new mongoose.Schema({
     required: true,
     ref: "User",
   },
+  referenceSolutions: [{
+    language:{
+      type:String,
+      required:true,
+    },
+    completedCode:{
+      type:String,
+      required:true,
+    }
+  }],
 });
+
+ 
 const Problem = mongoose.model("Problem", problemSchema);
 export default Problem;

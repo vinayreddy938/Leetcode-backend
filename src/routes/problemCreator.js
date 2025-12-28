@@ -10,7 +10,7 @@ problemRouter.post("/create",adminMiddleware,problemCreateValidation, problemCre
 
 
 problemRouter.get("/:id", getProblemController);
-problemRouter.put("/:id", adminMiddleware,updateProblemController);
+problemRouter.patch("/:id", adminMiddleware,updateProblemController);
 problemRouter.delete("/:id",adminMiddleware, deleteProblemController);
 
 

@@ -16,9 +16,12 @@ export const updateProblemRepository=async(id,updates)=>{
     return updatedProblem;
 
 };
-export const problemCreateRepository=(problem)=>{
+export const problemCreateRepository=async (problem)=>{
+ 
+
     const newProblem = new Problem(problem);
-    return newProblem.save();
+    return await newProblem.save();
+    return 
 };
 export const deleteProblemRepository=(id)=>{
     return Problem.findByIdAndDelete(id);

@@ -1,4 +1,5 @@
 import { deleteProblemRepository, getProblemRepository, getProblemsRepository, problemCreateRepository, updateProblemRepository } from "../repository/prolemCreatorRepository";
+import { getLanguageByID, submitBatch } from "../utils/ProblemUtilty";
 
 export const getAllProblemsService = async () => {
     const problems = await getProblemsRepository();
@@ -17,9 +18,34 @@ export const updateProblemService=async(id,updates)=>{
 
 };
 export const problemCreateService=async (problem)=>{
+    const{title,description,difficulty,visibleTestCases,hiddenTestCases,startCode,referenceSolutions,problemCreator}=problem;
+    for(const {language,completeCode} of referenceSolutions){
+        /*
+        source_code: completeCode,
+        language_id: language,
+        stdin: "",
+        expected_output: "",
+        memory_limit: 128000,
+        time_limit: 5000,
+       
+        */
+       // I am creating batch submission for each reference solution against all visible test cases
+       const languageId = getLanguageByID(language);
+       const submissions = visibleTestCases.map(({input, output})=>({
+        source_code: completeCode,
+        language_id: languageId,
+        stdin: input,
+        expected_output: output
+       }));
+       // Here you can call a function to create batch submissions
+       // await createBatchSubmissions(submissions);  
+       const submissionResult = await  submitBatch(submissions)
+
+    }
+
    const newProblem =await problemCreateRepository(problem);
    return newProblem;
-};
+}; 
 export const deleteProblemService=async (id)=>{
     return await deleteProblemRepository(id);
 }
