@@ -1,4 +1,4 @@
-export const problemCreateValidation =async (req, res, next) => {
+export const problemCreateValidation = async (req, res, next) => {
   if (!req.body) {
     return res
       .status(400)
@@ -13,7 +13,6 @@ export const problemCreateValidation =async (req, res, next) => {
     "hiddenTestCases",
     "startCode",
     "referenceSolutions",
-    "problemCreator",
   ];
   const isAllowed = mandatoryFields.every((key) =>
     Object.keys(req.body).includes(key)
@@ -23,7 +22,7 @@ export const problemCreateValidation =async (req, res, next) => {
       .status(400)
       .json({ success: false, message: "Some field is missing" });
   }
-   const {
+  const {
     title,
     description,
     difficulty,
@@ -32,7 +31,6 @@ export const problemCreateValidation =async (req, res, next) => {
     hiddenTestCases,
     startCode,
     referenceSolutions,
-    
   } = req.body;
   if (title.trim().length === 0) {
     return res
@@ -55,71 +53,49 @@ export const problemCreateValidation =async (req, res, next) => {
       .json({ success: false, message: "Tags must be a non-empty array" });
   }
   if (!Array.isArray(visibleTestCases) || visibleTestCases.length === 0) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Visible test cases must be a non-empty array",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Visible test cases must be a non-empty array",
+    });
   }
   if (!Array.isArray(hiddenTestCases) || hiddenTestCases.length === 0) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Hidden test cases must be a non-empty array",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Hidden test cases must be a non-empty array",
+    });
   }
   if (!Array.isArray(startCode) || startCode.length === 0) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Start code must be a non-empty array",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Start code must be a non-empty array",
+    });
   }
   if (
     visibleTestCases.some((tc) => !tc.input || !tc.output || !tc.explanation)
   ) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message:
-          "Each visible test case must have input, output and explanation",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Each visible test case must have input, output and explanation",
+    });
   }
   if (hiddenTestCases.some((tc) => !tc.input || !tc.output)) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Each hidden test case must have input and output",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Each hidden test case must have input and output",
+    });
   }
   if (startCode.some((sc) => !sc.language || !sc.initialCode)) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Each start code must have language and initial code",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Each start code must have language and initial code",
+    });
   }
   if (referenceSolutions.some((rs) => !rs.language || !rs.completedCode)) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Each reference solution must have language and completed code",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Each reference solution must have language and completed code",
+    });
   }
-    if(problemCreator.trim().length === 0){
-    return res
-    .status(400)
-    .json({ success: false, message: "Problem creator cannot be empty" });
-  }
-  
- 
 
   next();
 };
